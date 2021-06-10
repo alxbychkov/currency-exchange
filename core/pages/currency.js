@@ -1,19 +1,25 @@
 import { Page } from "../Page.js"
 
 export class Currency extends Page {
-    constructor(params) {
-        super(params)
+    constructor(params,store) {
+        super(params,store)
         this.data = params
+        this.store = store
+        this.changeFavoriteHandler = this.changeFavoriteHandler.bind(this)
     }
     getRoot() {
         let option = ''
+        let stars = this.store.getState().favorites
         if (Object.keys(this.data.rates).length > 0) {
+            // this.data.rates.sort((a, b) => a )
             Object.keys(this.data.rates).forEach(type => {
+                let full = ''
+                if (stars.includes(type)) full =  ' full'
                 option += `
                     <div class="currency__item">
-                        <p class="currency__star" data-type="favorite"></p>
+                        <p class="currency__star${full}" data-type="favorite" data-name="${type}"></p>
                         <p class="currency__name" data-type="name">${type}</p>
-                        <p class="currency__price" data-type="buy">${this.data.rates[type]}</p>
+                        <p class="currency__price" data-type="buy">${this.data.rates[type].toFixed(4)}</p>
                         <p class="currency__price" data-type="sell">1.2074</p>
                     </div>
                 `
@@ -40,10 +46,18 @@ export class Currency extends Page {
                 star.addEventListener('click', this.changeFavoriteHandler)
             })
         }
+        // this.subscribe(state => console.log(state))
     }
 
     changeFavoriteHandler(e) {
-        e.target.classList.contains('full') ? e.target.classList.remove('full') : e.target.classList.add('full') 
+        const value = e.target.dataset.name
+        if (e.target.classList.contains('full')) {
+            e.target.classList.remove('full')
+            this.dispatch({type:'REMOVE_FAV', value})
+        } else {
+            e.target.classList.add('full')
+            this.dispatch({type:'ADD_FAV', value})
+        }
     }
 
     destroy() {

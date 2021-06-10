@@ -1,15 +1,21 @@
 import { Home } from "./core/pages/home.js"
 import { Currency } from "./core/pages/currency.js"
 import { Router } from "/core/Router.js"
+import { createStore } from "./core/Store.js"
+import { rootReducer } from "./core/redux/rootReducer.js"
 
-const router = new Router('#app', {home: Home, currency: Currency})
+const store = createStore(rootReducer, storage('exchange'))
 
-const main = document.querySelector('main.main')
-// if (main) {
-//     main.addEventListener('click', e => {
-//         const self = e.target
-//         if (self.dataset.type === 'favorite') {
-//             self.classList.contains('full') ? self.classList.remove('full') : self.classList.add('full') 
-//         }
-//     })
-// }
+store.subscribe(state => {
+    console.log('exchange', state)
+    storage('exchange', state)
+})
+
+const router = new Router('#app', {home: Home, currency: Currency}, store)
+
+function storage(key, data) {
+    if (!data) {
+        return JSON.parse(localStorage.getItem(key))
+    }
+    localStorage.setItem(key, JSON.stringify(data))
+}

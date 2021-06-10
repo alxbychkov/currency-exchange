@@ -1,16 +1,17 @@
 import { data } from "./Data.js"
 
 export class Router {
-    constructor(selector, routes) {
+    constructor(selector, routes, store) {
         this.container = document.querySelector(selector)
         this.routes = routes
         this.data = data
+        this.store = store
         this.page = new this.routes.home()
         this.hashChangeHandler = this.hashChangeHandler.bind(this)
-        this.init()
+        this.init(store)
     }
 
-    init() {
+    init(store) {
         window.addEventListener('hashchange', this.hashChangeHandler)
         this.hashChangeHandler()
     }
@@ -23,7 +24,7 @@ export class Router {
         document.querySelectorAll(`[router-link]`).forEach(a => a.classList.contains('active') && a.classList.remove('active'))
         document.querySelector(`a[href="#${link}"]`).classList.add('active')
         
-        this.page = new Page(data)
+        this.page = new Page(data, this.store)
         
         this.container.innerHTML = ``
         this.container.insertAdjacentElement('afterbegin', this.page.getRoot())
