@@ -12,18 +12,30 @@ export class Currency extends Page {
         let stars = this.store.getState().favorites
 
         if (Object.keys(this.data.rates).length > 0) {
-            // this.data.rates.sort((a, b) => a )
-            Object.keys(this.data.rates).forEach(type => {
-                let full = ''
-                if (stars && stars.includes(type)) full =  ' full'
-                option += `
+            if (stars) {
+                stars.forEach(s => {
+                    option += `
                     <div class="currency__item">
-                        <p class="currency__star${full}" data-type="favorite" data-name="${type}"></p>
+                        <p class="currency__star full" data-type="favorite" data-name="${s}"></p>
+                        <p class="currency__name" data-type="name">${s}</p>
+                        <p class="currency__price" data-type="buy">${this.data.rates[s].toFixed(4)}</p>
+                        <p class="currency__price" data-type="sell">1.2074</p>
+                    </div>
+                `                    
+                })
+                option += '<br>';
+            } 
+            Object.keys(this.data.rates).forEach(type => {
+                if (!stars || !stars.includes(type)) {
+                    option += `
+                    <div class="currency__item">
+                        <p class="currency__star" data-type="favorite" data-name="${type}"></p>
                         <p class="currency__name" data-type="name">${type}</p>
                         <p class="currency__price" data-type="buy">${this.data.rates[type].toFixed(4)}</p>
                         <p class="currency__price" data-type="sell">1.2074</p>
                     </div>
                 `
+                }
             })
         }
         const div = document.createElement('div')
@@ -34,8 +46,10 @@ export class Currency extends Page {
                 <p class="currency__title">Покупка</p>
                 <p class="currency__title">Продажа</p>
             </div>
+            </div>
+            <div class="currency-wrapper currencies">
             ${option}
-        </div>
+            </div>
         `
         return div
     }
@@ -47,7 +61,6 @@ export class Currency extends Page {
                 star.addEventListener('click', this.changeFavoriteHandler)
             })
         }
-        // this.subscribe(state => console.log(state))
     }
 
     changeFavoriteHandler(e) {

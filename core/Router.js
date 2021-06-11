@@ -8,10 +8,10 @@ export class Router {
         this.store = store
         this.page = new this.routes.home()
         this.hashChangeHandler = this.hashChangeHandler.bind(this)
-        this.init(store)
+        this.init()
     }
 
-    init(store) {
+    init() {
         window.addEventListener('hashchange', this.hashChangeHandler)
         this.hashChangeHandler()
     }

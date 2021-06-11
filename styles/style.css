@@ -16,11 +16,13 @@ body, html {
 
 .body {
     height: 100vh;
+    max-height: 100vh;
     display: grid;
-    grid-template-rows: max-content 1fr;
+    grid-template-rows: max-content 1fr max-content;
 }
 
-.header {
+.header,
+.footer {
     padding: 30px 0;
     background: #323232;
 }
@@ -41,12 +43,18 @@ body, html {
     margin-right: 25px;
 }
 
+.footer p,
 .menu__link {
     color: #FFFFFF;
     font-size: 18px;
     line-height: 22px;
     text-decoration: none;
     transition: .3s;
+}
+
+.footer p {
+    font-size: 14px;
+    text-align: center;
 }
 
 .menu__link.active {
@@ -64,6 +72,11 @@ body, html {
     row-gap: 5px;
 }
 
+.currency-wrapper.currencies {
+    max-height: calc(100vh - 399px);
+    overflow-y: auto;
+}
+
 .currency__item {
     display: grid;
     grid-template-columns: minmax(16px, max-content) 2fr 1fr 1fr;
@@ -77,7 +90,7 @@ body, html {
     color: #272727;
 }
 
-.currency__item:not(.currency__head):nth-child(2n+1) {
+.currency__item:not(.currency__head):nth-of-type(2n+1) {
     background: rgb(218, 242, 250);
 }
 
@@ -163,6 +176,12 @@ body, html {
     border: 1px solid black;
     text-transform: uppercase;
 }
+input[name="sell_price"] {
+    user-select: none;
+}
+input[name="sell_price"]:disabled {
+    background-color: #FFFFFF;
+}
 
 .form__btn {
     width: 320px;
@@ -233,6 +252,11 @@ body, html {
 @media screen and (max-width: 561px) {
     .currency__item {
         grid-template-columns: minmax(max-content, 16px) minmax(max-content, 100px) 1fr 1fr;
+    }
+}
+@media screen and (min-width: 561px) {
+    .currency__title {
+        margin-left: -15px;
     }
 }
 

@@ -55,7 +55,7 @@ export class Home extends Page {
                         <p class="items__title">Получить</p>
                         <select name="buy" id="buy" class="items__select">${option_sell}</select>
                         <div class="exchange__sum">
-                            <input type="number" class="form__input" placeholder="10" name="sell_price" value="${this.sell}">
+                            <input type="number" class="form__input" placeholder="10" name="sell_price" value="${this.sell}" disabled>
                             <span class="exchange__icon" data-type="icon">${icon_sell}</span>
                         </div>
                     </div>
@@ -67,6 +67,13 @@ export class Home extends Page {
     }
 
     afterRender() {
+        this.input_buy_price = document.querySelector('input[name="buy_price"]')
+        this.input_sell_price = document.querySelector('input[name="sell_price"]')
+        this.info_sell_price = document.querySelector('[data-type="sell-price"]')
+        this.info_buy_price = document.querySelector('[data-type="buy-price"]')
+        this.info_sell_cur = document.querySelector('[data-type="sell-cur"]')
+        this.info_buy_cur = document.querySelector('[data-type="buy-cur"]')
+
         const selector = document.querySelectorAll('select')
         if (selector.length > 0) {
             selector.forEach(s => {
@@ -88,18 +95,18 @@ export class Home extends Page {
         const type = e.target.value
         const icon = e.target.parentNode.querySelector('[data-type="icon"]')
         const info = e.target.closest('form').querySelector('.rate__info')
-        const sellCur = e.target.closest('form').querySelector('[data-type="sell-cur"]')
-        const buyCur = e.target.closest('form').querySelector('[data-type="buy-cur"]')
-        const buyPrice = e.target.closest('form').querySelector('[data-type="buy-price"]')
-        const sellPrice = e.target.closest('form').querySelector('[data-type="sell-price"]')
+
+        const sellCur = e.target.closest('form').querySelector('[data-type="sell-cur"]') // this.info_sell_cur
+        const buyCur = e.target.closest('form').querySelector('[data-type="buy-cur"]') // this.info_buy_cur
+        const buyPrice = e.target.closest('form').querySelector('[data-type="buy-price"]') // this.info_buy_price
+        const sellPrice = e.target.closest('form').querySelector('[data-type="sell-price"]') // this.info_sell_price
 
         if (e.target.name === 'sell') {
-            sellCur.innerHTML = type
-            
+            this.info_sell_cur.innerHTML = type
         }
         if (e.target.name === 'buy') {
-            buyCur.innerHTML = type
-            buyPrice.innerHTML = this.qout
+            this.info_buy_cur.innerHTML = type
+            this.info_buy_price.innerHTML = this.qout
         }
 
         if (icon) icon.innerHTML = type
