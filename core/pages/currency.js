@@ -10,11 +10,12 @@ export class Currency extends Page {
     getRoot() {
         let option = ''
         let stars = this.store.getState().favorites
+
         if (Object.keys(this.data.rates).length > 0) {
             // this.data.rates.sort((a, b) => a )
             Object.keys(this.data.rates).forEach(type => {
                 let full = ''
-                if (stars.includes(type)) full =  ' full'
+                if (stars && stars.includes(type)) full =  ' full'
                 option += `
                     <div class="currency__item">
                         <p class="currency__star${full}" data-type="favorite" data-name="${type}"></p>
