@@ -14,6 +14,7 @@
                 <ul class="menu">
                     <li class="menu__item"><a href="#" router-link class="menu__link">Обмен</a></li>
                     <li class="menu__item"><a href="#currency" router-link class="menu__link">Курсы валют</a></li>
+                    <li class="menu__item"><a href="#chart" router-link class="menu__link">График</a></li>
                 </ul>
             </nav>
         </div>
@@ -28,6 +29,8 @@
             <p>&copy; Copyright 2022</p>
         </div>
     </footer>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/annotations.js"></script>
     <script type="module" src="index.js"></script>
 </body>
 </html>

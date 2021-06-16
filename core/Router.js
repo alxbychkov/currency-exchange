@@ -1,10 +1,9 @@
-import { data } from "./Data.js"
+import { getData } from "./Data.js"
 
 export class Router {
     constructor(selector, routes, store) {
         this.container = document.querySelector(selector)
         this.routes = routes
-        this.data = data
         this.store = store
         this.page = new this.routes.home()
         this.hashChangeHandler = this.hashChangeHandler.bind(this)
@@ -24,10 +23,15 @@ export class Router {
         document.querySelectorAll(`[router-link]`).forEach(a => a.classList.contains('active') && a.classList.remove('active'))
         document.querySelector(`a[href="#${link}"]`).classList.add('active')
         
-        this.page = new Page(data, this.store)
+        getData(link).then(res => {
+            this.data = res
+
+            this.page = new Page(this.data, this.store)
         
-        this.container.innerHTML = ``
-        this.container.insertAdjacentElement('afterbegin', this.page.getRoot())
-        this.page.afterRender()
+            this.container.innerHTML = ``
+            this.container.insertAdjacentElement('afterbegin', this.page.getRoot())
+            this.page.afterRender()
+        })
+
     }
 }

@@ -4,9 +4,9 @@ export class Home extends Page {
     constructor(params) {
         super(params)
         this.data = params
-        this.type = 'CHF'
+        this.type = 'EUR'
         this.qout = ''
-        this.buy = 100
+        this.buy = 1
         this.sell = ''
         this.inputChangeHandler = this.inputChangeHandler.bind(this)
         this.selectChangeHandler = this.selectChangeHandler.bind(this)
@@ -17,18 +17,27 @@ export class Home extends Page {
         let option_sell = ''
         let icon = ''
         let icon_sell = this.type
-        if (Object.keys(this.data.rates).length > 0) {
-            Object.keys(this.data.rates).forEach(type => {
-                option_buy += `<option value="${type}" data-buy="${this.data.rates[type]}">${type}</option>`
+
+        if (this.data.length > 0) {
+
+            option_buy += `<option value="RUB" data-buy="1">RUB</option>`
+
+            this.data.forEach(obj => {
+                const type = obj.CharCode
+                const value = obj.Value
+                const nominal = obj.Nominal
+
                 if (this.type !== type)
-                    option_sell += `<option value="${type}" data-sell="${this.data.rates[type]}">${type}</option>`
+                    option_sell += `<option value="${type}" data-nominal="${nominal}" data-sell="${value}">${type}</option>`
                 else {
-                    this.qout = +this.data.rates[type]
-                    this.sell = this.qout*this.buy
-                    option_sell += `<option value="${type}" data-sell="${this.qout}" selected>${type}</option>`
+                    this.qout = parseInt(value)
+                    this.nominal = nominal
+                    this.sell = (this.buy/this.qout*this.nominal).toFixed(4)
+                    option_sell += `<option value="${type}" data-nominal="${nominal}" data-sell="${this.qout}" selected>${type}</option>`
                 }
             })
-            icon = Object.keys(this.data.rates)[0]
+
+            icon = 'RUB'
         }
 
         const div = document.createElement('div')
@@ -46,8 +55,8 @@ export class Home extends Page {
                         <div class="exchange__rate">
                             <p class="rate__title">Курс обмена:</p>
                             <p class="rate__info">
-                                <span data-type="sell-price">100</span>&nbsp;<span class="uppercase" data-type="sell-cur">${icon}</span>&nbsp;=&nbsp;
-                                <span data-type="buy-price">${this.qout}</span>&nbsp;<span class="uppercase" data-type="buy-cur">${icon_sell}</span>
+                                <span data-type="sell-price">${this.nominal}</span>&nbsp;<span class="uppercase" data-type="buy-cur">${icon_sell}</span>&nbsp;=&nbsp;
+                                <span data-type="buy-price">${this.qout}</span>&nbsp;<span class="uppercase" data-type="sell-cur">${icon}</span>
                             </p>
                         </div>
                     </div>
@@ -73,6 +82,7 @@ export class Home extends Page {
         this.info_buy_price = document.querySelector('[data-type="buy-price"]')
         this.info_sell_cur = document.querySelector('[data-type="sell-cur"]')
         this.info_buy_cur = document.querySelector('[data-type="buy-cur"]')
+        this.input_buy_price.value = 1
 
         const selector = document.querySelectorAll('select')
         if (selector.length > 0) {
@@ -87,45 +97,42 @@ export class Home extends Page {
                 i.addEventListener('input', this.inputChangeHandler)
             })
         }
+
+        const submitBtn = document.querySelector('.exchange__form input[type="submit"]')
+        if (submitBtn) submitBtn.addEventListener('click', e => e.preventDefault())
     }
 
     selectChangeHandler(e) {
-        
-        this.qout = +e.target.selectedOptions[0].dataset.sell
         const type = e.target.value
+        
         const icon = e.target.parentNode.querySelector('[data-type="icon"]')
         const info = e.target.closest('form').querySelector('.rate__info')
-
-        const sellCur = e.target.closest('form').querySelector('[data-type="sell-cur"]') // this.info_sell_cur
-        const buyCur = e.target.closest('form').querySelector('[data-type="buy-cur"]') // this.info_buy_cur
-        const buyPrice = e.target.closest('form').querySelector('[data-type="buy-price"]') // this.info_buy_price
-        const sellPrice = e.target.closest('form').querySelector('[data-type="sell-price"]') // this.info_sell_price
 
         if (e.target.name === 'sell') {
             this.info_sell_cur.innerHTML = type
         }
         if (e.target.name === 'buy') {
+            this.qout = parseInt(e.target.selectedOptions[0].dataset.sell)
+            this.nominal = e.target.selectedOptions[0].dataset.nominal
+            this.input_sell_price.value = (this.input_buy_price.value/this.qout*this.nominal).toFixed(4)
             this.info_buy_cur.innerHTML = type
             this.info_buy_price.innerHTML = this.qout
+            this.info_sell_price.innerHTML = this.nominal
         }
 
         if (icon) icon.innerHTML = type
-        if (info) {
-
-        }
     }
 
     inputChangeHandler(e) {
         const name = e.target.name
-        const sell_input = document.querySelector('input[name="sell_price"]')
         let sell_price
+
         switch (name) {
             case 'buy_price':
-                sell_price = e.target.value * this.qout
-                sell_input.value = sell_price.toFixed(4)
+                sell_price = (e.target.value/this.qout*this.nominal)
+                this.input_sell_price.value = sell_price.toFixed(4)
                 break
             case 'sell_price':
-                
                 break
         }
     }
@@ -134,8 +141,18 @@ export class Home extends Page {
         const selector = document.querySelectorAll('select')
         if (selector.length > 0) {
             selector.forEach(s => {
-                s.removeEventListener('input', this.selectChangeHandler)
+                s.removeEventListener('change', this.selectChangeHandler)
             })
         }
+
+        const inputs = document.querySelectorAll('input[type="number"]')
+        if (inputs.length > 0) {
+            inputs.forEach(i => {
+                i.removeEventListener('input', this.inputChangeHandler)
+            })
+        }
+
+        const submitBtn = document.querySelector('.exchange__form input[type="submit"]')
+        if (submitBtn) submitBtn.removeEventListener('click', e => e.preventDefault())
     }
 }

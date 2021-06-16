@@ -11,40 +11,46 @@ export class Currency extends Page {
         let option = ''
         let stars = this.store.getState().favorites
 
-        if (Object.keys(this.data.rates).length > 0) {
-            if (stars) {
+        if (this.data.length > 0) {
+            if (stars && stars.length > 0) {
                 stars.forEach(s => {
+                    const obj = this.data.find(el => {
+                        if (el.CharCode === s) return el
+                    })
+                    
                     option += `
                     <div class="currency__item">
                         <p class="currency__star full" data-type="favorite" data-name="${s}"></p>
                         <p class="currency__name" data-type="name">${s}</p>
-                        <p class="currency__price" data-type="buy">${this.data.rates[s].toFixed(4)}</p>
-                        <p class="currency__price" data-type="sell">1.2074</p>
+                        <p class="currency__price" data-type="buy">${obj.Nominal}</p>
+                        <p class="currency__price" data-type="sell">${obj.Value}</p>
                     </div>
                 `                    
                 })
-                option += '<br>';
-            } 
-            Object.keys(this.data.rates).forEach(type => {
+                option += '<br>';                
+            }
+            this.data.forEach(obj => {
+                const type = obj.CharCode
                 if (!stars || !stars.includes(type)) {
                     option += `
                     <div class="currency__item">
                         <p class="currency__star" data-type="favorite" data-name="${type}"></p>
                         <p class="currency__name" data-type="name">${type}</p>
-                        <p class="currency__price" data-type="buy">${this.data.rates[type].toFixed(4)}</p>
-                        <p class="currency__price" data-type="sell">1.2074</p>
+                        <p class="currency__price" data-type="buy">${obj.Nominal}</p>
+                        <p class="currency__price" data-type="sell">${obj.Value}</p>
                     </div>
                 `
                 }
             })
         }
+
         const div = document.createElement('div')
         div.innerHTML = `
             <h1 class="page__title">Курсы валют</h1>
             <div class="currency-wrapper">
             <div class="currency__item currency__head">
-                <p class="currency__title">Покупка</p>
-                <p class="currency__title">Продажа</p>
+                <p class="currency__title">Номинал</p>
+                <p class="currency__title">RUB</p>
             </div>
             </div>
             <div class="currency-wrapper currencies">

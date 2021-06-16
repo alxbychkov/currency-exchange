@@ -145,9 +145,18 @@ body, html {
     color: #272727;
 }
 
+.chart__form,
 .exchange__form {
     display: flex;
     flex-wrap: wrap;
+}
+
+.chart__form > * {
+    flex: 1;
+}
+
+.chart__form label:not(:last-child) {
+    margin-right: 15px;
 }
 
 .form__items {
@@ -231,6 +240,10 @@ input[name="sell_price"]:disabled {
     text-transform: uppercase;
 }
 
+#chart {
+    height: calc(100vh - 459px);
+}
+
 @media screen and (max-width: 768px) {
     .form__items,
     .form__btn {
@@ -247,6 +260,21 @@ input[name="sell_price"]:disabled {
         grid-template-rows: 1fr;
         row-gap: 5px;
     }
+    .chart__form {
+        justify-content: space-between;
+    }
+    .chart__form label:last-of-type {
+        margin-right: 0;
+    }
+    .chart__form label {
+        width: 48%;
+    }
+    .chart__form input[type="submit"] {
+        margin-bottom: 15px;
+    }
+    .chart__form > * {
+        flex: auto;
+    }
 }
 
 @media screen and (max-width: 561px) {
@@ -257,6 +285,15 @@ input[name="sell_price"]:disabled {
 @media screen and (min-width: 561px) {
     .currency__title {
         margin-left: -15px;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .chart__form label:first-of-type {
+        margin-right: 0;
+    }
+    .chart__form label {
+        width: 100%;
     }
 }
 
